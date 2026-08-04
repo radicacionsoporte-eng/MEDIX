@@ -1,2 +1,716 @@
-# MEDIX
-Auditoría experta de archivos JSON
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medix Facturación | Aliado Estratégico en Salud</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medix: {
+                            blue: '#1E3A8A',
+                            green: '#10B981',
+                            dark: '#1F2937',
+                            light: '#F8FAFC',
+                            accent: '#F59E0B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px -10px rgba(30, 58, 138, 0.15);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #1E3A8A 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .dot-nav {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(30, 58, 138, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .dot.active {
+            background-color: #10B981;
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .dot-nav { display: none; }
+        }
+
+        /* small helper to visually hide offscreen content for accessibility */
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    </style>
+</head>
+<body class="text-medix-dark font-sans antialiased bg-medix-light overflow-x-hidden">
+
+    <!-- Header Fijo -->
+    <header class="fixed top-0 left-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 transition-all duration-300 shadow-sm" id="main-header" role="banner">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-medix-blue rounded-lg flex items-center justify-center text-white font-heading font-bold text-xl">M</div>
+                <div>
+                    <h1 class="font-heading font-bold text-medix-blue text-lg leading-tight">MEDIX</h1>
+                    <p class="text-xs text-medix-green font-semibold tracking-wider">FACTURACIÓN</p>
+                </div>
+            </div>
+
+            <!-- Desktop CTA -->
+            <div class="hidden md:flex items-center gap-4">
+                <a href="#contacto" class="hidden md:inline-flex items-center gap-2 bg-medix-green hover:bg-emerald-600 text-white px-5 py-2 rounded-full font-semibold text-sm transition-all shadow-lg shadow-emerald-200">
+                    <i class="fa-brands fa-whatsapp"></i> Contáctanos
+                </a>
+            </div>
+
+            <!-- Mobile hamburger -->
+            <div class="md:hidden flex items-center gap-3">
+                <a href="https://wa.me/573178546514" target="_blank" aria-label="WhatsApp" class="bg-medix-green text-white p-2 rounded-lg shadow-sm">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <button id="nav-toggle" aria-controls="mobile-menu" aria-expanded="false" class="p-2 rounded-md border border-gray-200 bg-white" aria-label="Abrir menú">
+                    <svg id="icon-open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-medix-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-medix-blue hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <nav id="mobile-menu" class="md:hidden bg-white/95 border-t border-gray-100 hidden" aria-label="Menú principal">
+            <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-3">
+                <a href="#portada" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Portada</a>
+                <a href="#quienes-somos" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Quiénes somos</a>
+                <a href="#propuesta" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Propuesta</a>
+                <a href="#proceso" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Metodología</a>
+                <a href="#servicios" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Servicios</a>
+                <a href="#planes" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Planes</a>
+                <a href="#resultados" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Resultados</a>
+                <a href="#contacto" class="py-3 px-4 rounded-lg hover:bg-medix-light font-medium">Contacto</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Navegación Lateral de Puntos -->
+    <nav class="dot-nav" aria-hidden="true">
+        <a href="#portada" class="dot active" data-target="portada" title="Portada"></a>
+        <a href="#quienes-somos" class="dot" data-target="quienes-somos" title="Quiénes somos"></a>
+        <a href="#propuesta" class="dot" data-target="propuesta" title="Propuesta"></a>
+        <a href="#proceso" class="dot" data-target="proceso" title="Proceso"></a>
+        <a href="#servicios" class="dot" data-target="servicios" title="Servicios"></a>
+        <a href="#planes" class="dot" data-target="planes" title="Planes"></a>
+        <a href="#resultados" class="dot" data-target="resultados" title="Resultados"></a>
+        <a href="#contacto" class="dot" data-target="contacto" title="Contacto"></a>
+    </nav>
+
+    <main class="w-full pt-24"> <!-- pt-24 para compensar header fijo en todas las pantallas -->
+
+        <!-- SLIDE 1: PORTADA -->
+        <section id="portada" class="min-h-screen flex items-center justify-center bg-medix-blue relative overflow-hidden py-20">
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-10 mix-blend-overlay"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-medix-blue via-medix-blue/95 to-medix-dark"></div>
+            
+            <div class="relative z-10 max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                <div class="reveal">
+                    <div class="inline-flex items-center gap-2 bg-medix-accent/20 text-medix-accent px-4 py-1.5 rounded-full font-heading font-bold text-xs tracking-widest uppercase mb-6 border border-medix-accent/30">
+                        <span class="w-2 h-2 bg-medix-accent rounded-full animate-pulse"></span> Soluciones Estratégicas en Salud
+                    </div>
+                    <h1 class="font-heading font-extrabold text-4xl sm:text-5xl md:text-6xl leading-[1.05] mb-4 text-white">
+                        Precisión en tu <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-medix-green to-emerald-300">Facturación y CUV</span>
+                    </h1>
+                    <p class="text-base md:text-xl text-gray-300 font-light leading-relaxed mb-6 max-w-lg">
+                        Auditoría experta de archivos JSON, validación tecnológica y radicación en salud. Optimizamos tu flujo de caja con rigor normativo en <strong class="text-white">Cali y el Valle del Cauca</strong>.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="#planes" class="bg-medix-green hover:bg-emerald-600 text-white px-5 py-3 rounded-xl font-bold text-base transition-all shadow-xl shadow-emerald-900/20 flex items-center gap-2">
+                            Conocer Planes <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a href="#proceso" class="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/20 px-5 py-3 rounded-xl font-semibold text-base transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> Nuestra Metodología
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="reveal delay-200 hidden md:block">
+                    <div class="glass-card p-6 md:p-8 rounded-3xl relative">
+                        <div class="absolute -top-6 -right-6 bg-medix-accent text-white w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-2xl md:text-3xl shadow-xl transform rotate-12">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl md:text-2xl text-medix-blue mb-3">Tecnología + Experto Humano</h3>
+                        <p class="text-medix-dark/80 text-sm md:text-lg leading-relaxed mb-4">
+                            No solo revisamos papeles. Auditamos la estructura técnica de tus <strong>archivos JSON</strong> para garantizar la generación exitosa del CUV antes de que salga de tu institución.
+                        </p>
+                        <div class="flex items-center gap-4 pt-4 border-t border-gray-200">
+                            <div class="text-3xl md:text-4xl font-serif font-bold text-medix-green">100%</div>
+                            <div class="text-xs md:text-sm font-semibold text-medix-dark/70">Compromiso con el cumplimiento de tiempos de radicación</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 2: QUIÉNES SOMOS -->
+        <section id="quienes-somos" class="min-h-screen flex items-center bg-white py-20">
+            <div class="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+                <div class="reveal relative">
+                    <div class="absolute -inset-4 bg-medix-green/10 rounded-3xl transform rotate-2 hidden lg:block"></div>
+                    <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=1000&auto=format&fit=crop" loading="lazy" alt="Tecnología y Auditoría en Salud" class="relative rounded-3xl shadow-2xl w-full object-cover h-[300px] sm:h-[380px] md:h-[500px]">
+                    <div class="absolute -bottom-8 -right-8 bg-white p-4 sm:p-6 rounded-2xl shadow-xl border-l-4 border-medix-blue max-w-xs hidden md:block">
+                        <p class="font-heading font-bold text-medix-blue text-sm md:text-lg">"Fusionamos el rigor de la auditoría en salud con la eficiencia de la validación tecnológica."</p>
+                    </div>
+                </div>
+                
+                <div class="reveal">
+                    <h2 class="font-heading font-bold text-3xl sm:text-4xl md:text-5xl mb-4 text-medix-blue">Expertos Especializados en <span class="gradient-text">Gestión de Facturación</span></h2>
+                    <p class="text-base text-gray-600 mb-6 leading-relaxed">
+                        Somos una firma especializada en auditoría, validación y radicación de facturas en el sector salud colombiano. Nuestro enfoque está en blindar tus procesos, minimizar glosas de origen y garantizar un flujo de caja predecible.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 p-4 rounded-xl hover:bg-medix-light transition-colors">
+                            <div class="bg-medix-blue text-white w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-lg shadow-blue-900/20">
+                                <i class="fa-solid fa-file-code"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-heading font-bold text-lg text-medix-dark">Auditoría de JSON y CUV</h4>
+                                <p class="text-gray-600 text-sm">Validación técnica profunda de los archivos JSON para asegurar el cumplimiento del Código Único de Validación y los tiempos legales de radicación.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 rounded-xl hover:bg-medix-light transition-colors">
+                            <div class="bg-medix-green text-white w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-lg shadow-emerald-900/20">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-heading font-bold text-lg text-medix-dark">Liderazgo Senior Directo</h4>
+                                <p class="text-gray-600 text-sm">Tu cuenta es gestionada y supervisada por una experta senior. Cero delegación a personal junior rotativo.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 rounded-xl hover:bg-medix-light transition-colors">
+                            <div class="bg-medix-accent text-white w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 shadow-lg shadow-amber-900/20">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-heading font-bold text-lg text-medix-dark">ADN del Valle del Cauca</h4>
+                                <p class="text-gray-600 text-sm">Conocemos las dinámicas, tiempos y exigencias de las EPS regionales (Asmet, Nueva EPS, Emssanar, Sanitas, etc.).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 3: PROPUESTA DE VALOR -->
+        <section id="propuesta" class="min-h-screen flex items-center bg-medix-light py-20">
+            <div class="max-w-7xl mx-auto px-6 w-full">
+                <div class="text-center mb-12 reveal">
+                    <span class="text-medix-green font-bold tracking-widest uppercase text-sm">Nuestra Diferencia</span>
+                    <h2 class="font-heading font-bold text-3xl sm:text-4xl md:text-5xl mt-3 text-medix-blue">Propuesta de Valor</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="reveal bg-white p-6 md:p-10 rounded-3xl shadow-lg border-b-4 border-medix-blue hover:-translate-y-2 transition-transform duration-300">
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-blue-50 text-medix-blue rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-4 md:mb-6">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl md:text-2xl text-medix-blue mb-3">Validación Tecnológica</h3>
+                        <p class="text-gray-600 mb-4">Utilizamos plataformas especializadas para auditar la estructura de tus JSON antes de la radicación, asegurando un CUV limpio y válido.</p>
+                        <ul class="space-y-2 text-sm font-medium text-gray-700">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-medix-green"></i> Detección temprana de errores</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-medix-green"></i> Cumplimiento de Res. 2275 y 2284</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Card 2 -->
+                    <div class="reveal bg-medix-blue text-white p-6 md:p-10 rounded-3xl shadow-xl border-b-4 border-medix-accent hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-28 h-28 bg-white/5 rounded-full -mr-10 -mt-10"></div>
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-white/10 text-medix-accent rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-4 md:mb-6">
+                            <i class="fa-solid fa-location-crosshairs"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl md:text-2xl mb-3">Enfoque Local (Cali y Valle)</h3>
+                        <p class="text-blue-100 mb-4">Entendemos los procesos específicos de las EPS del suroccidente, lo que nos permite anticipar requerimientos y acelerar tus radiciones.</p>
+                        <ul class="space-y-2 text-sm font-medium text-blue-50">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-medix-accent"></i> Dominio de EPS regionales</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-medix-accent"></i> Gestión de redes contributivas y subsidiadas</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Card 3 -->
+                    <div class="reveal bg-white p-6 md:p-10 rounded-3xl shadow-lg border-b-4 border-medix-green hover:-translate-y-2 transition-transform duration-300">
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-emerald-50 text-medix-green rounded-2xl flex items-center justify-center text-2xl md:text-3xl mb-4 md:mb-6">
+                            <i class="fa-solid fa-handshake"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-xl md:text-2xl text-medix-blue mb-3">Modelo por Resultados</h3>
+                        <p class="text-gray-600 mb-4">Nuestra estructura de planes se adapta a la pertinencia de tu operación. Tu inversión está alineada con la mejora real de tu recaudo.</p>
+                        <ul class="space-y-2 text-sm font-medium text-gray-700">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-medix-green"></i> Sin costos ocultos ni letras pequeñas</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-medix-green"></i> Transparencia total en la gestión</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 4: METODOLOGÍA -->
+        <section id="proceso" class="min-h-screen flex items-center bg-medix-blue relative py-20 overflow-hidden">
+            <div class="absolute top-0 right-0 w-[400px] h-[400px] bg-medix-green/10 rounded-full blur-3xl hidden lg:block"></div>
+            <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-medix-accent/10 rounded-full blur-3xl hidden lg:block"></div>
+
+            <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="font-heading font-bold text-3xl sm:text-4xl md:text-5xl text-white mb-3">Metodología de Trabajo</h2>
+                    <p class="text-base sm:text-lg text-blue-200">Un proceso estructurado para optimizar tu recaudo con rigor y eficiencia.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-4 gap-6 relative">
+                    <!-- Línea conectora (solo desktop) -->
+                    <div class="hidden md:block absolute top-12 left-0 w-full h-1 bg-gradient-to-r from-medix-green via-medix-accent to-medix-green opacity-30"></div>
+                    
+                    <!-- Paso 1 -->
+                    <div class="reveal bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all group">
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-medix-green text-white rounded-full flex items-center justify-center font-bold text-xl md:text-2xl mb-4 md:mb-6 shadow-lg relative z-10 group-hover:scale-110 transition-transform">1</div>
+                        <h3 class="font-heading font-bold text-lg md:text-xl mb-2 text-medix-accent">Diagnóstico y Alineación</h3>
+                        <p class="text-sm text-blue-100 leading-relaxed">Evaluación de tus procesos actuales de facturación y identificación de puntos críticos de glosa.</p>
+                    </div>
+                    
+                    <!-- Paso 2 -->
+                    <div class="reveal bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all group delay-100">
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-medix-green text-white rounded-full flex items-center justify-center font-bold text-xl md:text-2xl mb-4 md:mb-6 shadow-lg relative z-10 group-hover:scale-110 transition-transform">2</div>
+                        <h3 class="font-heading font-bold text-lg md:text-xl mb-2 text-medix-accent">Validación Tecnológica</h3>
+                        <p class="text-sm text-blue-100 leading-relaxed">Auditoría de archivos JSON mediante plataforma especializada para asegurar el CUV antes de radicar.</p>
+                    </div>
+                    
+                    <!-- Paso 3 -->
+                    <div class="reveal bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all group delay-200">
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-medix-green text-white rounded-full flex items-center justify-center font-bold text-xl md:text-2xl mb-4 md:mb-6 shadow-lg relative z-10 group-hover:scale-110 transition-transform">3</div>
+                        <h3 class="font-heading font-bold text-lg md:text-xl mb-2 text-medix-accent">Radicación Ágil</h3>
+                        <p class="text-sm text-blue-100 leading-relaxed">Gestión del proceso de radicación cumpliendo estrictamente con los tiempos legales y requerimientos de las EPS.</p>
+                    </div>
+                    
+                    <!-- Paso 4 -->
+                    <div class="reveal bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/20 hover:bg-white/20 transition-all group delay-300">
+                        <div class="w-12 h-12 md:w-14 md:h-14 bg-medix-green text-white rounded-full flex items-center justify-center font-bold text-xl md:text-2xl mb-4 md:mb-6 shadow-lg relative z-10 group-hover:scale-110 transition-transform">4</div>
+                        <h3 class="font-heading font-bold text-lg md:text-xl mb-2 text-medix-accent">Seguimiento y Recuperación</h3>
+                        <p class="text-sm text-blue-100 leading-relaxed">Respuesta técnica a glosas, negociación y reportes ejecutivos mensuales de tu estado de cartera.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 5: SERVICIOS Y PLATAFORMA -->
+        <section id="servicios" class="min-h-screen flex items-center bg-white py-20">
+            <div class="max-w-7xl mx-auto px-6 w-full">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="font-heading font-bold text-3xl sm:text-4xl md:text-5xl text-medix-blue">Portafolio de Servicios</h2>
+                    <p class="text-gray-600 mt-4 max-w-3xl mx-auto">Soluciones integrales que cubren todo el ciclo de vida de tu facturación, potenciadas por tecnología propia.</p>
+                </div>
+                
+                <!-- Servicios en cuadrilátero 2x2 -->
+                <div class="grid md:grid-cols-2 gap-6 mb-12">
+                    <!-- Servicio 1 -->
+                    <div class="reveal group bg-medix-light p-6 md:p-8 rounded-2xl border border-gray-100 hover:border-medix-blue/30 hover:shadow-xl transition-all flex gap-4">
+                        <div class="text-medix-blue bg-white w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl shadow-sm group-hover:bg-medix-blue group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-file-code"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading font-bold text-lg md:text-xl text-medix-blue mb-2">Auditoría y Validación de JSON</h3>
+                            <p class="text-sm md:text-base text-gray-600 mb-3">Revisión técnica exhaustiva de los archivos de reporte (JSON) para garantizar la generación exitosa del Código Único de Validación (CUV).</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Validación estructural</span>
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Cumplimiento Res. 2275</span>
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Prevención de glosas de origen</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicio 2 -->
+                    <div class="reveal group bg-medix-light p-6 md:p-8 rounded-2xl border border-gray-100 hover:border-medix-green/30 hover:shadow-xl transition-all flex gap-4">
+                        <div class="text-medix-green bg-white w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl shadow-sm group-hover:bg-medix-green group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading font-bold text-lg md:text-xl text-medix-blue mb-2">Gestión de Radicación</h3>
+                            <p class="text-sm md:text-base text-gray-600 mb-3">Ciclo completo de envío, seguimiento y control de facturas ante las diferentes EPS y entes de control.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Radicación EPS</span>
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Seguimiento de cuentas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicio 3 -->
+                    <div class="reveal group bg-medix-light p-6 md:p-8 rounded-2xl border border-gray-100 hover:border-medix-accent/30 hover:shadow-xl transition-all flex gap-4">
+                        <div class="text-medix-accent bg-white w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl shadow-sm group-hover:bg-medix-accent group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading font-bold text-lg md:text-xl text-medix-blue mb-2">Recuperación de Cartera</h3>
+                            <p class="text-sm md:text-base text-gray-600 mb-3">Gestión técnica y persistente de recursos retenidos, con respuesta fundamentada a glosas y devoluciones.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Respuesta a glosas</span>
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Negociación</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicio 4 -->
+                    <div class="reveal group bg-medix-light p-6 md:p-8 rounded-2xl border border-gray-100 hover:border-medix-dark/30 hover:shadow-xl transition-all flex gap-4">
+                        <div class="text-medix-dark bg-white w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl shadow-sm group-hover:bg-medix-dark group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-heading font-bold text-lg md:text-xl text-medix-blue mb-2">Asesoría Especializada</h3>
+                            <p class="text-sm md:text-base text-gray-600 mb-3">Capacitación y asesoría en normatividad vigente para optimizar los procesos internos de tu institución.</p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Capacitación normativa</span>
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Optimización de ciclos</span>
+                                <span class="bg-white px-3 py-1 rounded-full text-xs font-semibold text-gray-600 border">Acompañamiento en auditorías</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mención de la Plataforma -->
+                <div class="reveal bg-gradient-to-r from-gray-50 to-blue-50 border border-medix-blue/20 p-6 md:p-8 rounded-2xl flex flex-col md:flex-row items-center gap-6">
+                    <div class="bg-medix-blue text-white w-16 md:w-20 h-16 md:h-20 rounded-2xl flex items-center justify-center text-3xl md:text-4xl shrink-0">
+                        <i class="fa-solid fa-laptop-code"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-heading font-bold text-lg md:text-xl text-medix-blue mb-1">Potenciado por Tecnología Propia</h3>
+                        <p class="text-gray-700 mb-2">Contamos con una plataforma especializada (<a href="https://rips-suite.ai.studio/" target="_blank" class="text-medix-green font-semibold hover:underline">rips-suite.ai.studio</a>) que permite la validación eficiente y automatizada de los JSON frente al código CUV.</p>
+                        <div class="flex items-start gap-2 bg-white/60 p-3 rounded-lg border border-medix-green/30">
+                            <i class="fa-solid fa-circle-info text-medix-green mt-1"></i>
+                            <p class="text-sm text-gray-700"><strong>Transparencia total:</strong> El uso de la plataforma tiene un costo asociado <strong>únicamente por concepto de validación</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 6: PLANES -->
+        <section id="planes" class="min-h-screen flex items-center bg-medix-light py-20">
+            <div class="max-w-7xl mx-auto px-6 w-full">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="font-heading font-bold text-3xl sm:text-4xl md:text-5xl text-medix-blue">Planes de Acompañamiento</h2>
+                    <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Diseñados para escalar contigo. Nuestros honorarios se definen según la pertinencia de tu operación y los resultados obtenidos, no por paquetes rígidos.</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-3 gap-8 items-center max-w-6xl mx-auto">
+                    <!-- Plan 1 -->
+                    <div class="reveal bg-white rounded-3xl p-6 md:p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all">
+                        <div class="text-medix-blue font-bold mb-2 uppercase tracking-wider text-xs">Plan Básico</div>
+                        <h3 class="font-heading font-bold text-2xl md:text-3xl mb-1 text-medix-dark">Protección</h3>
+                        <p class="text-sm text-medix-green font-medium mb-4">Consultorios y Prof. Independientes</p>
+                        
+                        <ul class="space-y-3 mb-6 text-sm">
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Auditoría y validación de JSON adaptada a tu volumen</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Radicación y seguimiento personalizado</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Respuesta técnica a glosas</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Reportes de gestión periódicos</span></li>
+                        </ul>
+                        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-center mb-4">
+                            <p class="text-xs text-gray-500 uppercase font-bold tracking-wide">Inversión</p>
+                            <p class="text-medix-blue font-bold">Definida por pertinencia y resultados</p>
+                        </div>
+                        <a href="#contacto" class="block text-center font-bold text-medix-blue bg-white hover:bg-gray-50 py-3 rounded-xl border border-gray-200 transition-colors">Solicitar Cotización</a>
+                    </div>
+
+                    <!-- Plan 2 (Destacado) -->
+                    <div class="reveal bg-medix-blue text-white rounded-3xl p-6 md:p-10 shadow-2xl transform lg:scale-105 relative z-10 border-t-8 border-medix-accent ring-4 ring-medix-accent/20">
+                        <div class="absolute top-0 right-0 bg-medix-accent text-white px-3 py-1.5 rounded-bl-xl rounded-tr-2xl font-bold text-xs uppercase tracking-widest shadow-lg">Recomendado</div>
+                        <div class="text-medix-accent font-bold mb-2 uppercase tracking-wider text-xs">Plan Empresarial</div>
+                        <h3 class="font-heading font-bold text-3xl md:text-4xl mb-1">Crecimiento</h3>
+                        <p class="text-sm text-blue-200 font-medium mb-4">IPS Pequeñas y Medianas</p>
+                        
+                        <ul class="space-y-3 mb-6 text-sm text-blue-50">
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-green mt-0.5"></i> <span>Validación preventiva de CUV con plataforma tecnológica</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-green mt-0.5"></i> <span>Gestión completa y técnica de glosas</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-green mt-0.5"></i> <span>Acompañamiento en la corrección de errores de origen</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-green mt-0.5"></i> <span>Capacitación a tu equipo en normatividad vigente</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-green mt-0.5"></i> <span>Reportes ejecutivos de flujo de caja y recaudo</span></li>
+                        </ul>
+                        <div class="bg-white/10 p-3 rounded-xl border border-white/20 text-center mb-4">
+                            <p class="text-xs text-medix-accent uppercase font-bold tracking-wide">Inversión</p>
+                            <p class="text-white font-bold text-lg">Definida por pertinencia y resultados</p>
+                        </div>
+                        <a href="#contacto" class="block text-center font-bold text-medix-blue bg-medix-accent hover:bg-amber-400 py-3 rounded-xl transition-all shadow-lg">Agendar Reunión</a>
+                    </div>
+
+                    <!-- Plan 3 -->
+                    <div class="reveal bg-white rounded-3xl p-6 md:p-8 border border-gray-200 shadow-sm hover:shadow-lg transition-all delay-100">
+                        <div class="text-medix-blue font-bold mb-2 uppercase tracking-wider text-xs">Plan Premium</div>
+                        <h3 class="font-heading font-bold text-2xl md:text-3xl mb-1 text-medix-dark">Excelencia</h3>
+                        <p class="text-sm text-medix-green font-medium mb-4">Clínicas y Centros Médicos</p>
+                        
+                        <ul class="space-y-3 mb-6 text-sm">
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Auditoría integral de alto volumen</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Acompañamiento in-house (visitas programadas)</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Auditoría de concurrencia avanzada</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-circle-check text-medix-blue mt-0.5"></i> <span>Asesoría normativa permanente y representación</span></li>
+                        </ul>
+                        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-center mb-4">
+                            <p class="text-xs text-gray-500 uppercase font-bold tracking-wide">Inversión</p>
+                            <p class="text-medix-blue font-bold">Definida por pertinencia y resultados</p>
+                        </div>
+                        <a href="#contacto" class="block text-center font-bold text-medix-blue bg-white hover:bg-gray-50 py-3 rounded-xl border border-gray-200 transition-colors">Consultoría a Medida</a>
+                    </div>
+                </div>
+                
+                <p class="text-center mt-8 text-gray-500 text-sm font-medium flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-medix-blue"></i> Todos los planes incluyen confidencialidad absoluta, cumplimiento normativo y experta senior asignada.
+                </p>
+            </div>
+        </section>
+
+        <!-- SLIDE 7: RESULTADOS (Métricas) -->
+        <section id="resultados" class="min-h-screen flex items-center bg-medix-dark text-white relative py-20">
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#10B981 1px, transparent 1px); background-size: 40px 40px;"></div>
+            
+            <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+                <div class="text-center mb-12 reveal">
+                    <h2 class="font-heading font-bold text-3xl sm:text-4xl md:text-5xl text-medix-green">Resultados que Hablan</h2>
+                    <p class="text-blue-200 mt-4">Nuestros KPIs reflejan nuestro compromiso con la velocidad y la precisión de tu salud financiera.</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <!-- Métrica 1 y 2 juntas visualmente -->
+                    <div class="reveal text-center p-4 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="font-serif font-bold text-4xl md:text-6xl text-medix-accent mb-2">98%</div>
+                        <div class="text-sm font-medium text-blue-200 uppercase tracking-wide">Éxito en CUV<br>(Primer ciclo)</div>
+                    </div>
+                    <div class="reveal text-center p-4 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="font-serif font-bold text-4xl md:text-6xl text-medix-accent mb-2">&lt;3</div>
+                        <div class="text-sm font-medium text-blue-200 uppercase tracking-wide">Días promedio de<br>radicación</div>
+                    </div>
+                    <div class="reveal text-center p-4 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="font-serif font-bold text-4xl md:text-6xl text-medix-accent mb-2">85%</div>
+                        <div class="text-sm font-medium text-blue-200 uppercase tracking-wide">Recuperación de<br>cartera glosada</div>
+                    </div>
+                    <div class="reveal text-center p-4 md:p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                        <div class="font-serif font-bold text-4xl md:text-6xl text-medix-accent mb-2">95%</div>
+                        <div class="text-sm font-medium text-blue-200 uppercase tracking-wide">Tasa de retención<br>de clientes</div>
+                    </div>
+                </div>
+
+                <div class="reveal bg-gradient-to-r from-medix-blue to-blue-900 border border-blue-700 p-6 md:p-12 rounded-3xl max-w-4xl mx-auto backdrop-blur-sm shadow-2xl">
+                    <h3 class="font-heading font-bold text-xl md:text-2xl text-center mb-6 text-white">Ventajas Competitivas Clave</h3>
+                    <div class="grid md:grid-cols-2 gap-x-8 gap-y-4">
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-check-circle text-medix-green text-2xl"></i> <span class="text-sm md:text-lg"><strong>Experiencia Senior:</strong> Cero delegación a juniors.</span></div>
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-check-circle text-medix-green text-2xl"></i> <span class="text-sm md:text-lg"><strong>Enfoque Preventivo:</strong> Evitamos glosas de raíz con validación JSON.</span></div>
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-check-circle text-medix-green text-2xl"></i> <span class="text-sm md:text-lg"><strong>Conocimiento Local:</strong> Expertos en EPS del Valle.</span></div>
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-check-circle text-medix-green text-2xl"></i> <span class="text-sm md:text-lg"><strong>Transparencia:</strong> Cobros claros, sin costos por corrección de errores.</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SLIDE 8: CONTACTO -->
+        <section id="contacto" class="min-h-screen flex items-center bg-white py-20">
+            <div class="max-w-7xl mx-auto px-6 w-full">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    
+                    <!-- Compromiso -->
+                    <div class="reveal">
+                        <i class="fa-solid fa-quote-left text-6xl text-medix-blue/10 mb-6"></i>
+                        <h2 class="font-serif font-bold text-3xl sm:text-4xl md:text-5xl leading-tight text-medix-blue mb-6">
+                            "Transformamos la gestión financiera de tu IPS para que tú puedas enfocarte en lo que realmente importa: <span class="text-medix-green">la atención de tus pacientes.</span>"
+                        </h2>
+                        <div class="bg-medix-light border-l-4 border-medix-accent p-6 rounded-r-2xl">
+                            <h4 class="font-heading font-bold text-medix-dark text-lg mb-2">Nuestra Visión 2030</h4>
+                            <p class="text-gray-600 leading-relaxed text-sm md:text-base">
+                                Ser el aliado estratégico de más de 80 instituciones de salud en el suroccidente colombiano, habiendo recuperado más de <strong>$15.000 millones</strong> en cartera glosada para nuestros clientes, manteniendo siempre el sello de calidad especializado.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Card -->
+                    <div class="reveal bg-medix-blue text-white p-6 md:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+                        <div class="absolute -right-10 -bottom-10 opacity-5 text-[180px] md:text-[250px] rotate-12"><i class="fa-solid fa-building-user"></i></div>
+                        <h3 class="font-heading font-bold text-2xl md:text-3xl mb-2 relative z-10 text-medix-accent">Iniciemos una conversación</h3>
+                        <p class="text-blue-200 mb-6 relative z-10">Evaluemos juntos cómo optimizar tu proceso de radicación y CUV.</p>
+                        
+                        <ul class="space-y-4 relative z-10 text-lg mb-8">
+                            <li class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-medix-green shrink-0"><i class="fa-solid fa-location-dot"></i></div>
+                                <span>Cali y Valle del Cauca, Colombia</span>
+                            </li>
+                            <li class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-medix-green shrink-0"><i class="fa-solid fa-envelope"></i></div>
+                                <a href="mailto:radicacionsoporte948@gmail.com" class="hover:text-medix-accent transition-colors break-all">radicacionsoporte948@gmail.com</a>
+                            </li>
+                            <li class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-medix-green shrink-0"><i class="fa-brands fa-whatsapp"></i></div>
+                                <a href="https://wa.me/573178546514" target="_blank" class="hover:text-medix-accent transition-colors">+57 317 854 6514</a>
+                            </li>
+                        </ul>
+
+                        <a href="https://wa.me/573178546514?text=Hola,%20me%20interesa%20conocer%20más%20sobre%20los%20servicios%20de%20auditoría%20y%20validación%20de%20Medix%20Facturación" target="_blank" class="block w-full bg-medix-green hover:bg-emerald-500 text-white font-bold py-3 md:py-4 rounded-xl transition-all relative z-10 shadow-lg flex justify-center items-center gap-3 text-base md:text-lg group">
+                            <i class="fa-brands fa-whatsapp text-2xl group-hover:scale-110 transition-transform"></i> 
+                            Escribir por WhatsApp
+                        </a>
+                        <p class="text-center text-xs md:text-sm text-blue-300 mt-3 relative z-10">Respuesta garantizada en menos de 24 horas hábiles.</p>
+                    </div>
+                </div>
+                
+                <!-- Footer simple -->
+                <div class="mt-12 md:mt-20 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+                    <p>&copy; 2024 Medix Facturación. Todos los derechos reservados. | Cali, Valle del Cauca.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts para Interactividad -->
+    <script>
+        // 0. Helpers
+        const $ = (s, root = document) => root.querySelector(s);
+        const $$ = (s, root = document) => Array.from(root.querySelectorAll(s));
+
+        // 1. Animación de aparición al hacer scroll (Intersection Observer)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 2. Navegación de puntos activa según la sección visible (mejor detección)
+        const sections = Array.from(document.querySelectorAll('section[id]'));
+        const dots = Array.from(document.querySelectorAll('.dot'));
+
+        function updateCurrentSection() {
+            const scrollPos = window.scrollY + (window.innerHeight / 3);
+            let current = sections[0].id;
+            for (const section of sections) {
+                const top = section.offsetTop;
+                if (top <= scrollPos) current = section.id;
+            }
+            dots.forEach(dot => {
+                dot.classList.toggle('active', dot.getAttribute('data-target') === current);
+            });
+        }
+
+        window.addEventListener('scroll', updateCurrentSection);
+        window.addEventListener('resize', updateCurrentSection);
+        // init
+        updateCurrentSection();
+
+        // Allow click on dot to scroll smoothly and set active
+        dots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.getElementById(dot.getAttribute('data-target'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // 3. Mobile menu toggle
+        const navToggle = $('#nav-toggle');
+        const mobileMenu = $('#mobile-menu');
+        const iconOpen = $('#icon-open');
+        const iconClose = $('#icon-close');
+
+        function setMenu(open) {
+            if (open) {
+                mobileMenu.classList.remove('hidden');
+                navToggle.setAttribute('aria-expanded', 'true');
+                iconOpen.classList.add('hidden');
+                iconClose.classList.remove('hidden');
+            } else {
+                mobileMenu.classList.add('hidden');
+                navToggle.setAttribute('aria-expanded', 'false');
+                iconOpen.classList.remove('hidden');
+                iconClose.classList.add('hidden');
+            }
+        }
+
+        navToggle.addEventListener('click', () => {
+            const isOpen = navToggle.getAttribute('aria-expanded') === 'true';
+            setMenu(!isOpen);
+        });
+
+        // Close mobile menu when clicking a link
+        $$('#mobile-menu a').forEach(a => {
+            a.addEventListener('click', () => setMenu(false));
+        });
+
+        // 4. Close mobile menu on ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') setMenu(false);
+        });
+
+        // 5. Small enhancement: ensure focus styles on keyboard navigation
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Tab') document.documentElement.classList.add('user-is-tabbing');
+        });
+    </script>
+</body>
+</html>
