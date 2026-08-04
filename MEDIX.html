@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Medix Facturación: auditoría de JSON, validación de CUV y radicación en salud para IPS en Cali y Valle del Cauca.">
+    <meta name="theme-color" content="#1E3A8A">
     <title>Medix Facturación | Aliado Estratégico en Salud</title>
     
     <!-- Google Fonts -->
@@ -75,6 +77,9 @@
             flex-direction: column;
             gap: 1rem;
         }
+        section {
+            scroll-margin-top: 5rem;
+        }
         .dot {
             width: 12px;
             height: 12px;
@@ -119,7 +124,7 @@
 
             <!-- Mobile hamburger -->
             <div class="md:hidden flex items-center gap-3">
-                <a href="https://wa.me/573178546514" target="_blank" aria-label="WhatsApp" class="bg-medix-green text-white p-2 rounded-lg shadow-sm">
+                <a href="https://wa.me/573178546514" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="bg-medix-green text-white p-2 rounded-lg shadow-sm">
                     <i class="fa-brands fa-whatsapp"></i>
                 </a>
                 <button id="nav-toggle" aria-controls="mobile-menu" aria-expanded="false" class="p-2 rounded-md border border-gray-200 bg-white" aria-label="Abrir menú">
@@ -145,8 +150,8 @@
     </header>
 
     <!-- Navegación Lateral de Puntos -->
-    <nav class="dot-nav" aria-hidden="true">
-        <a href="#portada" class="dot active" data-target="portada" title="Portada"></a>
+    <nav class="dot-nav" aria-label="Navegación por secciones">
+        <a href="#portada" class="dot active" data-target="portada" title="Portada" aria-current="page"></a>
         <a href="#quienes-somos" class="dot" data-target="quienes-somos" title="Quiénes somos"></a>
         <a href="#propuesta" class="dot" data-target="propuesta" title="Propuesta"></a>
         <a href="#proceso" class="dot" data-target="proceso" title="Proceso"></a>
@@ -431,7 +436,7 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="font-heading font-bold text-lg md:text-xl text-medix-blue mb-1">Potenciado por Tecnología Propia</h3>
-                        <p class="text-gray-700 mb-2">Contamos con una plataforma especializada (<a href="https://rips-suite.ai.studio/" target="_blank" class="text-medix-green font-semibold hover:underline">rips-suite.ai.studio</a>) que permite la validación eficiente y automatizada de los JSON frente al código CUV.</p>
+                        <p class="text-gray-700 mb-2">Contamos con una plataforma especializada (<a href="https://rips-suite.ai.studio/" target="_blank" rel="noopener noreferrer" class="text-medix-green font-semibold hover:underline">rips-suite.ai.studio</a>) que permite la validación eficiente y automatizada de los JSON frente al código CUV.</p>
                         <div class="flex items-start gap-2 bg-white/60 p-3 rounded-lg border border-medix-green/30">
                             <i class="fa-solid fa-circle-info text-medix-green mt-1"></i>
                             <p class="text-sm text-gray-700"><strong>Transparencia total:</strong> El uso de la plataforma tiene un costo asociado <strong>únicamente por concepto de validación</strong>.</p>
@@ -594,14 +599,34 @@
                             </li>
                             <li class="flex items-center gap-4">
                                 <div class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-medix-green shrink-0"><i class="fa-brands fa-whatsapp"></i></div>
-                                <a href="https://wa.me/573178546514" target="_blank" class="hover:text-medix-accent transition-colors">+57 317 854 6514</a>
+                                <a href="https://wa.me/573178546514" target="_blank" rel="noopener noreferrer" class="hover:text-medix-accent transition-colors">+57 317 854 6514</a>
                             </li>
                         </ul>
 
-                        <a href="https://wa.me/573178546514?text=Hola,%20me%20interesa%20conocer%20más%20sobre%20los%20servicios%20de%20auditoría%20y%20validación%20de%20Medix%20Facturación" target="_blank" class="block w-full bg-medix-green hover:bg-emerald-500 text-white font-bold py-3 md:py-4 rounded-xl transition-all relative z-10 shadow-lg flex justify-center items-center gap-3 text-base md:text-lg group">
-                            <i class="fa-brands fa-whatsapp text-2xl group-hover:scale-110 transition-transform"></i> 
-                            Escribir por WhatsApp
-                        </a>
+                        <form id="contact-form" method="POST" action="https://formsubmit.co/ajax/radicacionsoporte948@gmail.com" class="space-y-4 relative z-10" novalidate>
+                            <input type="hidden" name="_subject" value="Nuevo contacto desde Medix Facturación">
+                            <input type="hidden" name="_captcha" value="false">
+                            <div class="grid gap-4 sm:grid-cols-2">
+                                <label class="block">
+                                    <span class="text-sm font-semibold text-white/90">Nombre</span>
+                                    <input id="contact-name" name="name" type="text" required autocomplete="name" class="mt-2 w-full rounded-2xl border border-white/20 bg-white/10 text-white placeholder:text-blue-200 px-4 py-3 focus:border-medix-green focus:outline-none focus:ring-2 focus:ring-medix-green/30" placeholder="Tu nombre">
+                                </label>
+                                <label class="block">
+                                    <span class="text-sm font-semibold text-white/90">Correo electrónico</span>
+                                    <input id="contact-email" name="email" type="email" required autocomplete="email" class="mt-2 w-full rounded-2xl border border-white/20 bg-white/10 text-white placeholder:text-blue-200 px-4 py-3 focus:border-medix-green focus:outline-none focus:ring-2 focus:ring-medix-green/30" placeholder="tu@correo.com">
+                                </label>
+                            </div>
+                            <label class="block">
+                                <span class="text-sm font-semibold text-white/90">Teléfono</span>
+                                <input id="contact-phone" name="phone" type="tel" autocomplete="tel" class="mt-2 w-full rounded-2xl border border-white/20 bg-white/10 text-white placeholder:text-blue-200 px-4 py-3 focus:border-medix-green focus:outline-none focus:ring-2 focus:ring-medix-green/30" placeholder="+57 3XX XXX XXXX">
+                            </label>
+                            <label class="block">
+                                <span class="text-sm font-semibold text-white/90">Mensaje</span>
+                                <textarea id="contact-message" name="message" required rows="5" class="mt-2 w-full rounded-2xl border border-white/20 bg-white/10 text-white placeholder:text-blue-200 px-4 py-3 focus:border-medix-green focus:outline-none focus:ring-2 focus:ring-medix-green/30" placeholder="Cuéntanos en qué podemos ayudarte..."></textarea>
+                            </label>
+                            <button id="contact-submit" type="submit" class="w-full bg-white text-medix-blue font-bold py-3 rounded-xl hover:bg-gray-100 transition-all shadow-lg">Enviar mensaje</button>
+                            <p id="form-status" class="hidden mt-2 rounded-2xl px-4 py-3 text-center text-sm border border-white/20" aria-live="polite"></p>
+                        </form>
                         <p class="text-center text-xs md:text-sm text-blue-300 mt-3 relative z-10">Respuesta garantizada en menos de 24 horas hábiles.</p>
                     </div>
                 </div>
@@ -652,7 +677,9 @@
                 if (top <= scrollPos) current = section.id;
             }
             dots.forEach(dot => {
-                dot.classList.toggle('active', dot.getAttribute('data-target') === current);
+                const isActive = dot.getAttribute('data-target') === current;
+                dot.classList.toggle('active', isActive);
+                dot.toggleAttribute('aria-current', isActive);
             });
         }
 
@@ -711,6 +738,65 @@
         document.addEventListener('keyup', (e) => {
             if (e.key === 'Tab') document.documentElement.classList.add('user-is-tabbing');
         });
+
+        // 6. Contact form submission using Formsubmit.co
+        const contactForm = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+        const contactSubmit = document.getElementById('contact-submit');
+
+        contactForm?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById('contact-name')?.value.trim();
+            const email = document.getElementById('contact-email')?.value.trim();
+            const message = document.getElementById('contact-message')?.value.trim();
+
+            if (!name || !email || !message) {
+                showStatus('Por favor completa los campos requeridos.', 'text-amber-200 bg-amber-900/20 border-amber-200');
+                return;
+            }
+
+            if (contactSubmit) {
+                contactSubmit.disabled = true;
+                contactSubmit.classList.add('opacity-70', 'cursor-not-allowed');
+            }
+
+            const formData = new FormData(contactForm);
+
+            try {
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        Accept: 'application/json'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Error en el envío');
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('Mensaje enviado correctamente. Gracias por contactarnos.', 'text-green-200 bg-green-900/20 border-green-200');
+                    contactForm.reset();
+                } else {
+                    throw new Error('No se recibió confirmación');
+                }
+            } catch (error) {
+                showStatus('No se pudo enviar el mensaje. Por favor intenta de nuevo o contáctanos por WhatsApp.', 'text-amber-200 bg-amber-900/20 border-amber-200');
+            } finally {
+                if (contactSubmit) {
+                    contactSubmit.disabled = false;
+                    contactSubmit.classList.remove('opacity-70', 'cursor-not-allowed');
+                }
+            }
+        });
+
+        function showStatus(text, classes) {
+            if (!formStatus) return;
+            formStatus.textContent = text;
+            formStatus.className = `mt-2 rounded-2xl px-4 py-3 text-center text-sm border ${classes}`;
+            formStatus.classList.remove('hidden');
+        }
     </script>
 </body>
 </html>
